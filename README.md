@@ -1,2 +1,24 @@
-# lifeSite
-个人网站，用于分享学习笔记和心得，分享生活趣事
+# ceshi-202109121527
+
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
