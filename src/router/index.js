@@ -1,25 +1,66 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+import whiteName from 'static/json/whiteName.json'
 
 const routes = [
     {
         path: '/',
-        name: 'Home',
-        component: Home
+        name: 'Index',
+        component: () => import('@/views/Index.vue'),
+        children: [
+            {
+                path: 'home',
+                name: 'Home',
+                component: () => import('@/views/Home.vue')
+            },
+            {
+                path: 'article',
+                name: 'Article',
+                component: () => import('@/views/Article.vue')
+            },
+            {
+                path: 'case',
+                name: 'Case',
+                component: () => import('@/views/Case.vue')
+            },
+            {
+                path: 'leaving',
+                name: 'Leaving',
+                component: () => import('@/views/Leaving.vue')
+            }
+        ]
     },
     {
-        path: '/about',
-        name: 'About',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    }
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/views/Login.vue')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/views/Register.vue')
+    },
+    {
+        path: '/404',
+        name: 'NoFound',
+        component: () => import('@/views/NoFound.vue')
+    },
+    // 未指定则重定向
+    {
+        path: '/:pathMatch(.*)',
+        redirect: '/'
+    },
 ]
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    console.log(to.path)
+    // if (whiteName.menuNameList.indexOf(to.path) > -1) {
+    // }
+    next()
 })
 
 export default router
