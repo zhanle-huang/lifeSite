@@ -33,6 +33,9 @@ module.exports = {
         loaderOptions: {
             postcss: {
                 plugins: [postcss]
+            },
+            less: {
+                additionalData: `@import "./src/assets/css/common.less";`
             }
         }
     },
@@ -41,6 +44,18 @@ module.exports = {
         config.resolve.alias
         .set('@', path.join(__dirname, 'src'))
         .set('static', path.join(__dirname, 'public/static'))
+        // 引入全局less变量
+        const oneOfsMap = config.module.rule('less').oneOfs.store
+        oneOfsMap.forEach(item => {
+            item
+                .use('sass-resources-loader')
+                .loader('sass-resources-loader')
+                .options({
+                    // 这里填入你的样式文件地址
+                    resources: './src/assets/css/common.less'
+                })
+                .end()
+        })
     },
     // 修改webpack配置
     configureWebpack: (config) => {

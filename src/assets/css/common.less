@@ -1,10 +1,38 @@
 body {
-    // font-size: 18px;
+    // font-size: 50px;
 }
+// 字体颜色
 @greyColor: #4c4c4c;
 @blueColor: rgba(0, 96, 140, .8);
 @headHeight: 70px;
 @deepGreyColor: rgba(0, 76, 104, 1.0);
 @deepGreyHover: #e7e7e7;
-@headbg: linear-gradient(to right, rgba(0, 96, 140, .5) 5%, rgba(0, 96, 140, .8) 80%);
+@activeColor: rgba(0, 118, 161, 1.0);
+@hoverColor: rgba(0, 118, 161, 1.0);
+@menuFontSize: 22px;
+@menuPaddingLeft: 100px;
+
+// 边框
+@caseBorder: #dcdcdc;
+
+// 背景色
+@activeBg: rgba(0, 118, 161, .2);
 @headbgHover: rgba(0, 96, 140, .2);
+@headbg: linear-gradient(to right, rgba(0, 96, 140, .5) 5%, rgba(0, 96, 140, .8) 80%);
+@footerbg: rgba(0, 96, 140, .2);
+
+.title-h3 {
+    font-weight: bold;
+    font-size: 24px;
+}
+.active {
+    color: @activeColor;
+}
+.icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    &.icon-like {
+        
+    }
+}

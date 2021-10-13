@@ -1,11 +1,14 @@
 <template>
-    <div id="nav">
-    </div>
     <router-view />
+    <Footer></Footer>
 </template>
 
 <script>
+    import Footer from '@/components/layout/Footer.vue'
     export default {
+        components: {
+            Footer
+        },
         data() {
             return {}
         }

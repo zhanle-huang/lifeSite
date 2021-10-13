@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		.box{
+			width: 100%;
+			height: 800px;
+			background:red;
+		}
+		.box .content{
+			width: 100%;
+			height: 50px;
+			background:blue;
+			position: absolute;
+			top: 0px;
+			/*left: 50%;*/
+			/*margin-left: -100px;*/	
+			opacity: 0.8;
+			transition-property: opacity;
+			transition-duration: 2s;
+			/*transition-delay: 0.5s;*/
+			opacity: 0.8;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<div class="content"></div>
+	</div>
+	<script>
+		var content1 = document.getElementsByClassName("content")[0];
+		
+		window.onload = f1;
+		window.onscroll = function(){
+			ScrollShowNav(content1);
+		}
+		var timer = false;
+		function ScrollShowNav(o){
+			var l = document.body.scrollTop+document.documentElement.scrollTop;
+			if(l-o.offsetTop != 0){
+				o.style.backgroundColor = "yellow";
+				o.style.opacity = "0.8";
+				o.style.top = parseInt(l) + "px";
+			}
+			if(timer){
+				clearTimeout(timer);
+			}
+				timer = setTimeout(function(){
+					o.style.opacity = "0";
+				}, 1000);
+			console.log(timer);
+		}
+
+		function f1(){
+			content1.style.opacity = "0";
+		}
+	</script>
+</body>
+</html>

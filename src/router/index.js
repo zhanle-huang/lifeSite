@@ -47,7 +47,7 @@ const routes = [
     // 未指定则重定向
     {
         path: '/:pathMatch(.*)',
-        redirect: '/'
+        redirect: '/home'
     },
 ]
 

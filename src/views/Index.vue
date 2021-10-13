@@ -1,6 +1,7 @@
 <template>
     <div class="index">
         <Head :curType="curMenu"></Head>
+        <router-view />
     </div>
 </template>
 
