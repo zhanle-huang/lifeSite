@@ -1,14 +1,16 @@
 <template>
     <div class="left-menu">
-        <div class="menu-logo">
-            <img src="../../assets/image/logo.png" alt="">&nbsp;&nbsp;&nbsp;^ _ ^
-            <div>重启寄存器</div>
-        </div>
-        <div class="menu-content">
-            <div class="menu-item" v-for="(item, index) in menuList" :key="index">
-                <h3 class="title-h3">{{item.title}}</h3>
-                <div :class="['item', {'active': curMenu === menu.type}]" v-for="(menu, mIndex) in item.menu" :key="mIndex + 100" @click="selectMenu(menu)">
-                    {{menu.title}}
+        <div class="menu">
+            <div class="menu-logo">
+                <img src="../../assets/image/logo.png" alt="">&nbsp;&nbsp;&nbsp;^ _ ^
+                <div>重启寄存器</div>
+            </div>
+            <div class="menu-content">
+                <div class="menu-item" v-for="(item, index) in menuList" :key="index">
+                    <h3 class="title-h3">{{item.title}}</h3>
+                    <div :class="['item', {'active': curMenu === menu.type}]" v-for="(menu, mIndex) in item.menu" :key="mIndex + 100" @click="selectMenu(menu)">
+                        {{menu.title}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,6 +64,27 @@
                                 type: 'mySql4'
                             }
                         ]
+                    },
+                    {
+                        title: 'web3',
+                        menu: [
+                            {
+                                title: 'html',
+                                type: 'html12'
+                            },
+                            {
+                                title: 'css',
+                                type: 'css23'
+                            },
+                            {
+                                title: 'js',
+                                type: 'js33'
+                            },
+                            {
+                                title: 'mySql',
+                                type: 'mySql44'
+                            }
+                        ]
                     }
                 ]
             }
@@ -75,6 +98,8 @@
                 this.curMenu = menu.type
                 this.$emit('select-menu', menu.type)
             }
+        },
+        mounted() {
         }
     }
 </script>
@@ -82,44 +107,50 @@
 <style scoped lang="less">
     @import '~@/assets/css/common.less';
     .left-menu {
+        height: 100%;
         border-right: 1px solid #000;
-        .menu-logo {
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-            img {
-                width: 40px;
-                height: auto;
-                margin: 15px 0 10px @menuPaddingLeft;
-            }
-            div {
+        overflow-y: scroll;
+        .menu {
+            -moz-user-select:none;
+            -webkit-user-select:none;
+            user-select:none;
+            .menu-logo {
                 width: 100%;
-                padding-left: @menuPaddingLeft;
-            }
-        }
-        .menu-content {
-            padding: 10px;
-            .menu-item {
-                .title-h3 {
-                    padding: 15px 0 15px @menuPaddingLeft - 15px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                flex-wrap: wrap;
+                margin-bottom: 15px;
+                img {
+                    width: 40px;
+                    height: auto;
+                    margin: 15px 0 10px @menuPaddingLeft;
                 }
-                .item {
-                    padding: 15px 0 15px @menuPaddingLeft;
-                    font-size: @menuFontSize;
-                    cursor: pointer;
-                    &.active {
-                        background: @activeBg;
-                        border-radius: 4px;
-                    }
-                    &:hover {
-                        color: @activeColor;
-                    }
+                div {
+                    width: 100%;
+                    padding-left: @menuPaddingLeft;
                 }
             }
+            .menu-content {
+                padding: 10px;
+                .menu-item {
+                    .title-h3 {
+                        padding: 15px 0 15px @menuPaddingLeft - 15px;
+                    }
+                    .item {
+                        padding: 15px 0 15px @menuPaddingLeft;
+                        font-size: @menuFontSize;
+                        cursor: pointer;
+                        &.active {
+                            background: @activeBg;
+                            border-radius: 4px;
+                        }
+                        &:hover {
+                            color: @activeColor;
+                        }
+                    }
+                }
+            }
         }
-        
     }
 </style>

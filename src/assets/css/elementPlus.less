@@ -1,0 +1,42 @@
+@baseFontSize: 20px;
+body {
+    .el-message {
+        padding: 5px 10px 5px 20px;
+        min-width: 180px;
+        .el-message__icon {
+            width: 30px;
+            height: 30px;
+            &:before {
+                font-size: @baseFontSize;
+                position: relative;
+                top: -20px;
+            }
+        }
+    }
+    el-pager
+    .el-pagination {
+        font-size: @baseFontSize;
+        .el-pager {
+            .number {
+                padding: 10px 0;
+            }
+        }
+    }
+    .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
+        min-width: 50px;
+        height: 35px;
+        line-height: 35px;
+    }
+    .el-pagination.is-background .el-pagination__total,
+    .el-pagination__editor.el-input .el-input__inner,
+    .el-pagination .el-select .el-input .el-input__inner {
+        height: 35px;
+        font-size: 18px;
+    }
+    .el-pagination button, .el-pagination span:not([class*=suffix]) {
+        font-size: 19px;
+    }
+    .el-pagination.is-background .el-pagination__total {
+        line-height: 35px;
+    }
+}

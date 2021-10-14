@@ -11,9 +11,10 @@
     @import '~@/assets/css/common.less';
     .footer {
         background: @footerbg;
-        padding: 15px;
         p {
+            height: 50px;
             text-align: center;
+            line-height: 50px;
         }
     }
 </style>

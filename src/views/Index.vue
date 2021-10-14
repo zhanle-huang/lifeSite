@@ -1,7 +1,9 @@
 <template>
     <div class="index">
         <Head :curType="curMenu"></Head>
-        <router-view />
+        <div class="content">
+            <router-view />
+        </div>
     </div>
 </template>
 
@@ -33,5 +35,12 @@
     }
 </script>
 
-<style>
+<style scoped lang="less">
+    .index {
+        height: 100%;
+        .content {
+            // height: calc(~"100% - 50px");
+            height: calc(~"100% - 70px");
+        }
+    }
 </style>
