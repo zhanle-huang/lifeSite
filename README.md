@@ -1,5 +1,7 @@
 # ceshi-202109121527
 
+# 当前版本 1.0.0
+
 ## Project setup
 ```
 npm install

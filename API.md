@@ -47,7 +47,13 @@
 
    ~~~json
    {
-       data: null,
+       data: {
+           userInfo: {
+               phone: '12345678911'
+               password: '123456'
+               token: '123s5a65s5x'
+           }
+       },
        status: 1,
        msg: '登录成功'
    }
@@ -211,10 +217,21 @@
        data: {
            list: [
                {
-                   id: '编号',
-                   articleId: '文章id',
-                   userId: '用户手机号',
-                   createTime: '创建时间'
+                   id: '1234567890000001',
+                   article: undefined,
+                   phone: '12345678911',
+                   title: '222',
+                   content: null,
+                   articleAuthor: '12345678912',
+                   categoryId: '1234567890000002',
+                   categoryName: '分类2',
+                   categoryType: 'type2',
+                   authorName: '测试2',
+                   readNum: 0,
+                   likeNum: 0,
+                   recommentNum: 0,
+                   articleTime: null,
+                   createTime: null
                }
            ],
            total: 1000
@@ -245,10 +262,19 @@
        data: {
            list: [
                {
-                   id: '编号',
-                   articleId: 'demoId',
-                   userId: '用户手机号',
-                   createTime: '创建时间'
+                   id: '1234567890000006',
+                   demoId: '1234567890000001',
+                   phone: '12345678915',
+                   title: '今天真是个好日子啊+1++1',
+                   demoAuthor: '12345678911',
+                   authorName: '测试1',
+                   path: 'xxx666',
+                   downName: '测试5558888',
+                   readNum: 0,
+                   likeNum: 0,
+                   downLoadNum: 0,
+                   demoTime: 2021-10-20T02:31:02.000Z,
+                   createTime: null
                }
            ],
            total: 1000
@@ -479,13 +505,10 @@
 
 2. 参数：
 
-   |  参数名   |  类型  | 是否必填 | 说明       |    示例     |
-   | :-------: | :----: | :------: | ---------- | :---------: |
-   | articleId | string |    是    | 文章编号   |  4s4a5da54  |
-   |   title   | string |    是    | 文章标题   |    xxxx     |
-   |  author   | string |    是    | 作者手机号 | 12345678911 |
-   |  content  |  blob  |    是    | 内容       |   [blob]    |
-
+   |   参数名   |  类型  | 是否必填 | 说明     |   示例    |
+   | :--------: | :----: | :------: | -------- | :-------: |
+   | categoryId | string |    是    | 分类编号 | 4s4a5da54 |
+   
 3. 返回的结果
 
    ~~~json
@@ -650,12 +673,11 @@
 
 2. 参数：
 
-   |  参数名   |  类型  | 是否必填 | 说明       |   示例    |
-   | :-------: | :----: | :------: | ---------- | :-------: |
-   | articleId | string |    是    | 文章编号   | 4s4a5da54 |
-   |   phone   | string |    是    | 评论手机号 |   xxxx    |
-   |  content  | string |    是    | 内容       |   xxxx    |
-
+   | 参数名  |  类型  | 是否必填 | 说明       | 示例 |
+   | :-----: | :----: | :------: | ---------- | :--: |
+   | userId  | string |    是    | 评论手机号 | xxxx |
+   | content | string |    是    | 内容       | xxxx |
+   
 3. 返回的结果
 
    ~~~json
@@ -668,15 +690,15 @@
 
 
 
-#### 3. 删除评论
+#### 3. 删除留言
 
 1. API：DELETE/leving
 
 2. 参数：
 
-   |  参数名  |  类型  | 是否必填 | 说明     |   示例    |
-   | :------: | :----: | :------: | -------- | :-------: |
-   | levingId | string |    是    | 留言编号 | 4s4a5da54 |
+   |  参数名   |  类型  | 是否必填 | 说明     |   示例    |
+   | :-------: | :----: | :------: | -------- | :-------: |
+   | leavingId | string |    是    | 留言编号 | 4s4a5da54 |
 
 3. 返回的结果
 
@@ -701,7 +723,7 @@
    | pageNum  | Number |    是    | 页码       |      1      |
    | pageSize | Number |    是    | 页大小     | 10， 默认10 |
    | demoName | string |    否    | 查询关键字 |    测试     |
-   |  phone   | string |    否    | 手机号查询 |   134434    |
+   |  author  | string |    否    | 手机号查询 |   134434    |
 
 3. 返回的结果
 
@@ -717,7 +739,7 @@
                    userSrc: '用户头像'
                    path: '路径',
                    downName: '下载名称'
-                   ndownLoadNum: '下载次数'
+                   downLoadNum: '下载次数'
                    readNum: '浏览次数'
                    likeNum: '收藏次数'
                    createTime: '创建时间'
@@ -764,9 +786,10 @@
 
 2. 参数：
 
-   | 参数名 |  类型  | 是否必填 | 说明     |   示例    |
-   | :----: | :----: | :------: | -------- | :-------: |
-   | demoId | string |    是    | demo编号 | 4s4a5da54 |
+   | 参数名 |  类型  | 是否必填 | 说明       |   示例    |
+   | :----: | :----: | :------: | ---------- | :-------: |
+   | demoId | string |    是    | demo编号   | 4s4a5da54 |
+   | author | string |    是    | 作者手机号 |    xxx    |
 
 3. 返回的结果
 
@@ -782,15 +805,17 @@
 
 #### 4. 修改分类
 
-1. API：PUT/category
+1. API：PUT/demo
 
 2. 参数：
 
-   | 参数名 |  类型  | 是否必填 | 说明     | 示例 |
-   | :----: | :----: | :------: | -------- | :--: |
-   |   id   | string |    是    | 分类编号 | xxx  |
-   |  name  | string |    是    | 分类名称 | xxx  |
-   |  type  | string |    是    | 分类类型 | xxxx |
+   |  参数名  |  类型  | 是否必填 | 说明     | 示例 |
+   | :------: | :----: | :------: | -------- | :--: |
+   |    id    | string |    是    | demo编号 | xxx  |
+   |  title   | string |    是    | demo标题 | xxx  |
+   |  author  | string |    是    | 上传者   | xxxx |
+   |   path   | string |    是    | 路径     | xxx  |
+   | downName | string |    是    | 下载名称 | xxx  |
 
 3. 返回的结果
 
@@ -798,7 +823,7 @@
    {
        data: null,
        status: 1,
-       msg: '修改分类成功'
+       msg: '修改demo成功'
    }
    ~~~
 
