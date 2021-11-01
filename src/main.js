@@ -5,8 +5,13 @@ import store from './store'
 import './utils/rem.js'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import 'highlight.js/styles/monokai.css';
+// import VueMarkdownIt from 'vue3-markdown-it';
+// import 'highlight.js/styles/monokai.css';
+
 const app = createApp(App)
 app.use(ElementPlus)
+// app.use(VueMarkdownIt)
 
 let positionStatus = ''
 let div = null

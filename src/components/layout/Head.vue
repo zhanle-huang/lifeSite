@@ -73,6 +73,9 @@
 <style scoped lang="less">
     @import '~@/assets/css/common.less';
     .head-container {
+        position: sticky;
+        top: 0;
+        z-index: 999;
         display: flex;
         justify-content: space-between;
         align-items: center;

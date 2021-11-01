@@ -27,7 +27,7 @@
                 </li>
             </ul>
             <div class="page">
-                <el-pagination v-model:currentPage="currentPage" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize" background layout="total, sizes, prev, pager, next, jumper"
+                <el-pagination v-model:currentPage="pageNum" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize" background layout="total, sizes, prev, pager, next, jumper"
                     :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange"></el-pagination>
             </div>
         </div>
@@ -54,7 +54,7 @@
                 console.log(value)
             }
             return {
-                currentPage: ref(1),
+                pageNum: ref(1),
                 pageSize: ref(10),
                 total: ref(1000),
                 isLogin: ref(true),

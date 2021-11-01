@@ -26,7 +26,17 @@ const routes = [
                 path: 'leaving',
                 name: 'Leaving',
                 component: () => import('@/views/Leaving.vue')
-            }
+            },
+            {
+                path: '/article-detail',
+                name: 'ArticleDetail',
+                component: () => import('@/views/ArticleDetail.vue')
+            },
+            {
+                path: '/article-edit',
+                name: 'ArticleEdit',
+                component: () => import('@/views/article/EditArticle.vue')
+            },
         ]
     },
     {

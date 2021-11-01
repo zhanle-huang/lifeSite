@@ -9,20 +9,42 @@
 
 <script>
     import Footer from '@/components/layout/Footer.vue'
+    import whiteName from 'static/json/whiteName.json'
+    import fulScreenName from 'static/json/fulScreenName.json'
     export default {
         components: {
             Footer
         },
         data() {
             return {}
-        }
+        },
+        watch: {
+            $route(to, from) {
+                if (whiteName.menuNameList.indexOf(to.path) > -1) {
+                    this.curMenu = to.path.substring(1)
+                }
+                if (fulScreenName.fulName.indexOf(to.path) > -1) {
+                    this.$nextTick(() => {
+                        let navContent = document.querySelector('.nav .content');
+                        navContent.style.height = 'calc(100% - 0.5rem)';
+                    })
+                } else {
+                    this.$nextTick(() => {
+                        let navContent = document.querySelector('.nav .content');
+                        navContent.style.height = 'auto';
+                        navContent.style.minHeight = 'calc(100% - 0.5rem)';
+                    })
+                }
+            }
+        },
     }
 </script>
 
 <style lang="less">
 @import "~@/assets/css/reset.css";
-@import "~@/assets/css/common.less";
+@import "~@/assets/css/theme.less";
 @import "~@/assets/css/elementPlus.less";
+@import '~@/assets/css/markdown.less';
 html,body,#app{
   height: 100%;
 }
@@ -33,6 +55,7 @@ html,body,#app{
     // color: #2c3e50;
     font-size: 18px;
     // height: 100%;
+    // background: rgba(250, 250, 250, 1.0);
 }
 .nav {
     position: absolute;

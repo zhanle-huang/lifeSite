@@ -130,13 +130,13 @@
 
 #### 权限类型（rightType）
 
-| 字段名     | 类型      | 长度 | 说明           | 解释                         |
-| ---------- | --------- | ---- | -------------- | ---------------------------- |
-| id         | varchar   | 16   | NOT NULL，主码 | 编号                         |
-| name       | varchar   | 100  | NULL           | 名称                         |
-| isMenu     | varchar   | 1    | 默认2          | 1表示菜单类型，2表示接口类型 |
-| createTime | timestamp |      | NULL           | 创建时间                     |
-| updateTime | timestamp |      | NULL           | 更新时间                     |
+| 字段名     | 类型      | 长度 | 说明  | 解释                         |
+| ---------- | --------- | ---- | ----- | ---------------------------- |
+| id         | varchar   | 16   | 主码  | 编号                         |
+| name       | varchar   | 100  | NULL  | 名称                         |
+| isMenu     | varchar   | 1    | 默认2 | 1表示菜单类型，2表示接口类型 |
+| createTime | timestamp |      | NULL  | 创建时间                     |
+| updateTime | timestamp |      | NULL  | 更新时间                     |
 
 
 
@@ -162,7 +162,7 @@
 | roleId     | varchar   | 16   | 主码  | 编号                 |
 | roleName   | varchar   | 100  | NULL  | 角色名               |
 | roleENName | varchar   | 100  | NULL  | 英文名               |
-| status     | varchar   | 1    | 默认0 | 0表示禁用，1表示启用 |
+| status     | varchar   | 0    | 默认0 | 0表示禁用，1表示启用 |
 | createTime | timestamp |      | NULL  | 创建时间             |
 | updateTime | timestamp |      | NULL  | 更新时间             |
 
@@ -182,18 +182,19 @@
 
 #### 用户授予角色表（roletouser）
 
-| 字段名      | 类型      | 长度 | 说明                                          | 解释             |
-| ----------- | --------- | ---- | --------------------------------------------- | ---------------- |
-| id          | varchar   | 16   | 主码                                          | 编号             |
-| beUser      | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除  | 被授予者者手机号 |
-| roleId      | varchar   | 16   | 外码，参照表roles的roleId字段，级联更新和删除 | 角色编号         |
-| rightExtend | varchar   | 1    | NULL                                          | 是否可授权给别人 |
-| operator    | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除  | 操作者手机号     |
-| createTime  | timestamp |      | NULL                                          | 创建时间         |
+| 字段名      | 类型      | 长度 | 说明                                          | 解释                               |
+| ----------- | --------- | ---- | --------------------------------------------- | ---------------------------------- |
+| id          | varchar   | 16   | 主码                                          | 编号                               |
+| beUser      | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除  | 被授予者者手机号                   |
+| roleId      | varchar   | 16   | 外码，参照表roles的roleId字段，级联更新和删除 | 角色编号                           |
+| rightExtend | varchar   | 1    | 默认0                                         | 是否可授权给别人，1表示是，0表示否 |
+| operator    | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除  | 操作者手机号                       |
+| createTime  | timestamp |      | NULL                                          | 创建时间                           |
+| updateTime  | timestamp |      | NULL                                          | 更新时间                           |
 
 
 
-#### 菜单表（sysMenu）
+#### 菜单表（sysmenu）
 
 | 字段名     | 类型      | 长度 | 说明 | 解释                                         |
 | ---------- | --------- | ---- | ---- | -------------------------------------------- |
@@ -259,7 +260,7 @@
 
 
 
-#### demo表：（demo）
+#### demo视图：（demoview）
 
 | 字段名       | 类型      | 长度 | 说明                                         | 解释                           |
 | ------------ | --------- | ---- | -------------------------------------------- | ------------------------------ |
@@ -278,3 +279,80 @@
 
 
 
+#### 权限视图（rightview）
+
+| 字段名      | 类型      | 长度 | 说明           | 解释                         |
+| ----------- | --------- | ---- | -------------- | ---------------------------- |
+| rightIdId   | varchar   | 16   | NOT NULL，主码 | 编号                         |
+| rightName   | varchar   | 100  | NULL           | 权限名                       |
+| rightENName | varchar   | 100  | NULL           | 英文名                       |
+| path        | varchar   | 255  | NULL           | 路径                         |
+| rightTypeId | varchar   | 16   | NULL           | 权限类型编号                 |
+| status      | varchar   | 1    | 默认0          | 0表示禁用，1表示启用         |
+| createTime  | timestamp |      | NULL           | 创建时间                     |
+| updateTime  | timestamp |      | NULL           | 更新时间                     |
+| typeName    | varchar   | 100  | NULL           | 名称                         |
+| isMenu      | varchar   | 1    | 默认2          | 1表示菜单类型，2表示接口类型 |
+
+
+
+#### 角色权限视图（rolerightview）
+
+| 字段名        | 类型      | 长度 | 说明                                            | 解释                         |
+| ------------- | --------- | ---- | ----------------------------------------------- | ---------------------------- |
+| id            | varchar   | 16   | 主码                                            | 编号                         |
+| roleId        | varchar   | 16   | 外码，参照表roles的roleId字段，级联更新和删除   | 角色编号                     |
+| rightId       | varchar   | 16   | 外码，参照表rights的rightId字段，级联更新和删除 | 权限编号                     |
+| operator      | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除    | 操作者手机号                 |
+| createTime    | timestamp |      | NULL                                            | 创建时间                     |
+| rightName     | varchar   | 100  | NULL                                            | 权限名                       |
+| rightENName   | varchar   | 100  | NULL                                            | 英文名                       |
+| path          | varchar   | 255  | NULL                                            | 路径                         |
+| rightTypeId   | varchar   | 16   | NULL                                            | 权限类型编号                 |
+| rightStatus   | varchar   | 1    | 默认0                                           | 0表示禁用，1表示启用         |
+| rightTypeName | varchar   | 100  | NULL                                            | 名称                         |
+| isMenu        | varchar   | 1    | 默认2                                           | 1表示菜单类型，2表示接口类型 |
+| roleName      | varchar   | 100  | NULL                                            | 名                           |
+| roleENName    | varchar   | 100  | NULL                                            | 英文名                       |
+| roleStatus    | varchar   | 1    | 默认0                                           | 0表示禁用，1表示启用         |
+
+
+
+#### 角色用户视图（roleuserview）
+
+| 字段名       | 类型      | 长度 | 说明                                          | 解释                               |
+| ------------ | --------- | ---- | --------------------------------------------- | ---------------------------------- |
+| id           | varchar   | 16   | 主码                                          | 编号                               |
+| beUser       | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除  | 被授予者者手机号                   |
+| roleId       | varchar   | 16   | 外码，参照表roles的roleId字段，级联更新和删除 | 角色编号                           |
+| rightExtend  | varchar   | 1    | 默认0                                         | 是否可授权给别人，1表示是，0表示否 |
+| operator     | varchar   | 11   | 外码，参照表users的phone字段，级联更新和删除  | 操作者手机号                       |
+| createTime   | timestamp |      | NULL                                          | 创建时间                           |
+| updateTime   | timestamp |      | NULL                                          | 更新时间                           |
+| roleName     | varchar   | 100  | NULL                                          | 名                                 |
+| roleENName   | varchar   | 100  | NULL                                          | 英文名                             |
+| roleStatus   | varchar   | 1    | 默认0                                         | 0表示禁用，1表示启用               |
+| beUserName   | varchar   | 11   | NULL                                          | 被授予角色的用户名                 |
+| operatorName | varchar   | 11   | NULL                                          | 操作者用户名                       |
+
+
+
+#### 用户权限视图（usertorightview)
+
+| 字段名        | 类型    | 长度 | 说明                                            | 解释                               |
+| ------------- | ------- | ---- | ----------------------------------------------- | ---------------------------------- |
+| id            | varchar | 16   | 主码                                            | 编号                               |
+| roleId        | varchar | 16   | 外码，参照表roles的roleId字段，级联更新和删除   | 角色编号                           |
+| rightId       | varchar | 16   | 外码，参照表rights的rightId字段，级联更新和删除 | 权限编号                           |
+| rightName     | varchar | 100  | NULL                                            | 权限名                             |
+| rightENName   | varchar | 100  | NULL                                            | 英文名                             |
+| path          | varchar | 255  | NULL                                            |                                    |
+| rightTypeId   | varchar | 16   | NULL                                            |                                    |
+| status        | varchar | 1    | 默认0                                           | 0表示禁用，1表示启用               |
+| rightTypeName | varchar | 100  | NULL                                            | 名称                               |
+| isMenu        | varchar | 1    | 默认2                                           | 1表示菜单类型，2表示接口类型       |
+| roleName      | varchar | 100  | NULL                                            | 角色名                             |
+| roleENName    | varchar | 100  | NULL                                            | 英文名                             |
+| beUser        | varchar | 11   | 外码，参照表users的phone字段，级联更新和删除    | 被授予者者手机号                   |
+| rightExtend   | varchar | 1    | 默认0                                           | 是否可授权给别人，1表示是，0表示否 |
+| beuUserName   | varchar | 20   | NULL                                            | 用户名                             |
