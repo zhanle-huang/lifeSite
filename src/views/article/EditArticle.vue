@@ -9,7 +9,7 @@
         </div>
         <div class="linear"></div>
         <div class="edit-content flex">
-            <div class="elit-area mk-content">
+            <div class="elit-area mk-content" ref="markdownInput">
                 <el-input
                     class="markdown-input"
                     v-model="textarea"
@@ -18,8 +18,8 @@
                     :autosize="{ minRows: 12, maxRows: 10000 }"
                   />
             </div>
-            <div class="markdown-content mk-content">
-                <Markdown :data="textarea"></Markdown>
+            <div class="markdown-content mk-content" ref="markdownContent">
+                <Markdown class="markdown-body" :data="textarea"></Markdown>
             </div>
         </div>
 
@@ -48,10 +48,11 @@
 
 <style scoped lang="less">
     .edit-article {
+        height: 100%;
         .edit-head {
             justify-content: center;
             margin: auto;
-            margin: 15px 0;
+            padding: 15px 0;
             .title-input {
                 width: 1000px;
                 margin-right: 15px;
@@ -67,16 +68,22 @@
                 }
             }
             .mk-content {
-                width: 48%;
-                min-height: 600px;
+                width: 47%;
+                // height: calc(~"100% - 70px");
+                height: 650px;
                 border: 1px solid @caseBorder;
                 padding: 15px;
+                overflow: hidden scroll;
+                .markdown-body {
+                    min-height: 700px;
+                }
             }
         }
         /deep/.el-textarea__inner {
+            border: none;
             resize: none;
-            font-size: 30px;
-            line-height: 60px;
+            font-size: 26px;
+            line-height: 26px;
         }
         .elit-area {
             font-size: 24px;

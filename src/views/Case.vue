@@ -2,23 +2,23 @@
     <div class="case">
         <div class="content">
             <div class="left">
-                <LeftMenu @select-menu="selectMenu"></LeftMenu>
+                <LeftMenu :menuList="menuList" :title="'xxxx'" @select-menu="selectMenu"></LeftMenu>
             </div>
             <div class="right">
                 <div class="box-shadow"></div>
                 <div class="content-list">
                     <ul class="case-list" v-myLoading="loading">
-                        <li class="case-item" v-for="(item, index) in demoList" :key="index">
+                        <li class="case-item" v-for="(item) in demoList" :key="item.id">
                             <div class="top">
                                 <img src="../assets/image/icon/case.png" alt="">
-                                <h3 class="title-h3">{{item.name}}</h3>
+                                <h3 class="title-h3">{{item.title}}</h3>
                             </div>
                             <div class="bottom">
                                 <span class="online" @click="onLinePreView(item.path)">在线预览</span>
                                 <div class="ctrl-btn-group">
                                     <span class="btn icon icon-download" title="下载"></span>
-                                    <span v-if="!item.like" class="btn icon icon-like" title="收藏" @click="collectCase(item.id)"></span>
-                                    <span v-else class="btn icon icon-liked" title="已收藏" @click="cancleCollectCase(item.id)"></span>
+                                    <span v-if="!item.like" class="btn icon icon-like" title="收藏" @click="collectCase(item)"></span>
+                                    <span v-else class="btn icon icon-liked" title="已收藏"></span>
                                 </div>
                             </div>
                         </li>
@@ -36,14 +36,25 @@
 
 <script>
     import LeftMenu from '@/components/layout/LeftMenu.vue';
+    import { artcleReq, demoReq } from '@/api/index.js';
     import {
-        ref
+        ref,
+        reactive,
+        provide
     } from 'vue';
     export default {
         components: {
             LeftMenu
         },
         setup() {
+            // 定义变量
+            let currentPage = ref(1)
+            let pageSize = ref(10)
+            let demoTotal = ref(1000)
+            let loading = ref(false)
+            let menuList = ref([])
+            let demoList = ref([])
+            
             // 页大小改变
             const handleSizeChange = (val) => {
                 console.log(`${val} items per page`);
@@ -56,8 +67,9 @@
              * 选择菜单
              * @param {Object} type 菜单类型
              * */
-            const selectMenu = (type) => {
-                console.log(type);
+            const selectMenu = (menuItem) => {
+                console.log(menuItem.id);
+                getDemoList(menuItem.id);
             }
             /**
              * 在线预览
@@ -66,165 +78,62 @@
             const onLinePreView = (path) => {
                 window.open(path)
             }
+            // 菜单处理
+            const getLeftMenu = async () => {
+                let param = {
+                    pageNum: 1,
+                    pageSize: 100
+                };
+                let res = await artcleReq.getTagList(param)
+                let tempMenu = []
+                res.data.list.map(item => {
+                    tempMenu.push({
+                        id: item.id,
+                        title: item.name,
+                        type: item.typeName,
+                        time: item.updateTime
+                    })
+                })
+                menuList.value = [
+                    {
+                        title: 'web',
+                        menu: tempMenu
+                    }
+                ]
+            }
+            // 获取demo列表
+            const getDemoList = (categoryId) => {
+                let param = {
+                    pageNum: currentPage.value,
+                    pageSize: pageSize.value,
+                    phone: '12345678915',
+                    categoryId: categoryId
+                }
+                demoReq.getDemoList(param).then(res => {
+                    console.log('demo', res)
+                    demoList.value = res.data.list;
+                    demoTotal.value = res.data.total
+                })
+            }
+            
+            // 调用方法
+            getLeftMenu();
             return {
-                currentPage: ref(1),
-                pageSize: ref(10),
-                demoTotal: ref(1000),
-                loading: ref(false),
+                currentPage,
+                pageSize,
+                demoTotal,
+                loading,
                 handleSizeChange,
                 handleCurrentChange,
                 selectMenu,
-                onLinePreView
+                onLinePreView,
+                menuList,
+                demoList
             }
         },
         data() {
             return {
-                demoList: [{
-                        id: '1',
-                        name: '滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '2',
-                        name: '滚动显示1',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示1',
-                        time: '2021-02-08 13:00:00',
-                        like: true
-                    },
-                    {
-                        id: '3',
-                        name: '滚动显示2',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示2',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '1',
-                        name: '滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '2',
-                        name: '滚动显示1',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示1',
-                        time: '2021-02-08 13:00:00',
-                        like: true
-                    },
-                    {
-                        id: '3',
-                        name: '滚动显示2',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示2',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '1',
-                        name: '滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '2',
-                        name: '滚动显示1',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示1',
-                        time: '2021-02-08 13:00:00',
-                        like: true
-                    },
-                    {
-                        id: '3',
-                        name: '滚动显示2',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示2',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '1',
-                        name: '滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '2',
-                        name: '滚动显示1',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示1',
-                        time: '2021-02-08 13:00:00',
-                        like: true
-                    },
-                    {
-                        id: '3',
-                        name: '滚动显示2',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示2',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '1',
-                        name: '滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '2',
-                        name: '滚动显示1',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示1',
-                        time: '2021-02-08 13:00:00',
-                        like: true
-                    },
-                    {
-                        id: '3',
-                        name: '滚动显示2',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示2',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '1',
-                        name: '滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示滚动显示',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-                    {
-                        id: '2',
-                        name: '滚动显示1',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示1',
-                        time: '2021-02-08 13:00:00',
-                        like: true
-                    },
-                    {
-                        id: '3',
-                        name: '滚动显示2',
-                        path: 'static/demo/scroll出现.html',
-                        downName: '滚动显示2',
-                        time: '2021-02-08 13:00:00',
-                        like: false
-                    },
-
-                ]
+                menuList1: []
             }
         },
         methods: {
@@ -232,13 +141,43 @@
              * 收藏
              * @param {String} id 编号
              * */
-            collectCase(id) {
-                console.log(id);
+            collectCase(item) {
+                let param = {
+                    demoId: item.id,
+                    phone: '12345678915'
+                }
+                demoReq.addDemoCollect(param).then(res => {
+                    if (res.status === 1) {
+                        item.like = true
+                        this.$message({
+                            message: '收藏成功！',
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error('收藏失败' + res.msg);
+                    }
+                })
             },
             // 取消收藏
-            cancleCollectCase(id) {
-                console.log(id);
-            }
+            cancleCollectCase(item) {
+                let param = {
+                    demoCollectId: item.id
+                }
+                demoReq.delDemoCollect(param).then(res => {
+                    if (res.status === 1) {
+                        item.like = false
+                        this.$message({
+                            message: '取消收藏成功！',
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error('取消收藏失败' + res.msg);
+                    }
+                })
+            },
+        },
+        created() {
+            // this.getLeftMenu1();
         },
         mounted() {
             console.log(this)

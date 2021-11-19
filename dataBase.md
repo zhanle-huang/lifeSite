@@ -116,15 +116,18 @@
 
 
 
-#### 首页轮播图
+#### 首页轮播图 （carousel)
 
-| 字段名     | 类型      | 长度 | 说明     | 解释       |
-| ---------- | --------- | ---- | -------- | ---------- |
-| id         | varchar   | 16   | NOT NULL | 轮播图的id |
-| src        | varchar   | 255  | NULL     | 路径       |
-| desc       | varchar   | 255  | NULL     | 文字描述   |
-| createTime | timestamp |      | NULL     | 创建时间   |
-| updateTime | timestamp |      | NULL     | 更新时间   |
+| 字段名     | 类型      | 长度 | 说明     | 解释          |
+| ---------- | --------- | ---- | -------- | ------------- |
+| id         | varchar   | 16   | NOT NULL | 轮播图的id    |
+| src        | varchar   | 255  | NULL     | 路径          |
+| desc       | varchar   | 255  | NULL     | 文字描述      |
+| positionX  | int       | 8    | 0        | 文字的x轴位置 |
+| positionY  | int       | 8    | 0        | 文字的y轴位置 |
+| descWidth  | int       | 8    | 300      | 文字的宽度    |
+| createTime | timestamp |      | NULL     | 创建时间      |
+| updateTime | timestamp |      | NULL     | 更新时间      |
 
 
 

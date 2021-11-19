@@ -16,6 +16,11 @@ app.use(ElementPlus)
 let positionStatus = ''
 let div = null
 let timer = null
+app.use(store)
+// 挂在mutations的方法
+console.log(store, store._mutations.updateParams[0])
+app.config.globalProperties.updateParams = store._mutations.updateParams[0];
+// app.config.globalProperties.$http = http
 app.directive('myLoading', {
     mounted(el, binding) {
         console.log('xxxaa', binding, app)
@@ -53,4 +58,4 @@ app.directive('myLoading', {
         }
     }
 })
-app.use(store).use(router).mount('#app')
+app.use(router).mount('#app')

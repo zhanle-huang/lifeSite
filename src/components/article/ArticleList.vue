@@ -14,12 +14,12 @@
                 <div class="bottom flex">
                     <div class="left flex">
                         <img class="user-img" src="../../assets/image/bg.jpg" alt="">
-                        <span class="user-name">{{item.authorName}}</span>
+                        <span class="user-name">{{item.userName}}</span>
                     </div>
                     <div class="right flex">
-                        <span class="btn icon icon-download" title="read">2021</span>
-                        <span class="btn icon icon-like" title="commend">1022</span>
-                        <span class="btn icon icon-liked" title="liked">333</span>
+                        <span class="btn icon icon-download" title="read">{{item.readNum}}</span>
+                        <span class="btn icon icon-like" title="commend">{{item.recommentNum}}</span>
+                        <span class="btn icon icon-liked" title="liked">{{item.likeNum}}</span>
                     </div>
                 </div>
             </li>

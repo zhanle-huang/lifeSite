@@ -1,3 +1,4 @@
+let checkPassword = '';
 export const validateName = (rule, value, callback) => {
     if (!value) {
         return callback(new Error('用户名不能为空'));
@@ -9,16 +10,14 @@ export const validatePass = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请输入密码'));
     } else {
-        if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-        }
+        checkPassword = value;
         callback();
     }
 };
 export const validatePass2 = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请再次输入密码'));
-    } else if (value !== this.ruleForm.pass) {
+    } else if (value !== checkPassword) {
         callback(new Error('两次输入密码不一致!'));
     } else {
         callback();

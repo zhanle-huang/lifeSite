@@ -2,7 +2,7 @@
     <div class="index">
         <Head :curType="curMenu"></Head>
         <div class="content">
-            <router-view />
+            <router-view/>
         </div>
     </div>
 </template>
@@ -16,21 +16,40 @@
         },
         data() {
             return {
-                curMenu: ''
+                curMenu: '',
+                reLoadPath: ['/home', '/article', '/case', '/leaving']
             }
         },
         watch: {
             $route(to, from) {
-                console.log('xxx', from.path); //从哪来
-                console.log(to.path); //到哪去
                 if (whiteName.menuNameList.indexOf(to.path) > -1) {
                     this.curMenu = to.path.substring(1)
                 }
             }
         },
+        methods: {
+            getReload() {
+                if (this.reLoadPath.indexOf(this.$route.fullPath) > -1) {
+                    sessionStorage.setItem('routePath', this.$route.fullPath)
+                } else {
+                    sessionStorage.removeItem('routePath')
+                }
+            }
+        },
+        // created() {
+        //     console.log('xxx')
+        //     this.$router.push('/home')
+        // }
         created() {
-            console.log('xxx')
-            this.$router.push('/home')
+            let route = sessionStorage.getItem('routePath')
+            if (route) {
+                this.$router.push(route)
+                sessionStorage.removeItem('routePath')
+            }
+            // window.onbeforeunload = () => {
+            //     sessionStorage.setItem('routePath', this.$route.fullPath)
+            // };
+            window.addEventListener('beforeunload', this.getReload)
         }
     }
 </script>

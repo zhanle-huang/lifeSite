@@ -26,7 +26,7 @@
     padding-left: 27px;
     line-height: 25px;
     color: @commentColor;
-    margin-right: 2px;
+    margin-right: 12px;
     &.icon-like {
         background: url('~@/assets/image/icon/like.png') left center/25px auto no-repeat;
     }
@@ -158,7 +158,7 @@ img.article-list {
 
 // 页码样式
 .page {
-    margin-top: 30px;
+    margin: 30px 0;
 }
 
 .my-loading {
@@ -217,6 +217,107 @@ img.article-list {
 .relpy-tag {
     color: @hoverColor;
 }
+
+// markdown内容
+html,
+body {
+    .markdown-body {
+        color: #424242 !important;
+    }
+}
+.markdown-content {
+    h1, h2, h3, h4, h5, h6 {
+        display: block;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+        font-weight: bold;
+        color: #464646 !important;
+    }
+    h1 {
+        font-size: 2.5em !important;
+        margin-block-start: 0.67em;
+        margin-block-end: 0.67em;
+    }
+    h2 {
+        font-size: 2em !important;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+    h3 {
+        font-size: 1.5em !important;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+    }
+    h4 {
+        font-size: 1.4em !important;
+        margin-block-start: 1.33em !important;
+        margin-block-end: 1.33em;
+    }
+    h5 {
+        font-size: 1.3em !important;
+        margin-block-start: 1.67em;
+        margin-block-end: 1.67em;
+    }
+    h6 {
+        font-size: 1.2em !important;
+        margin-block-start: 2.33em;
+        margin-block-end: 2.33em;
+    }
+    ol {
+        display: block;
+        list-style-type: decimal;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        padding-inline-start: 40px;
+    }
+    p {
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-size: 1.3em !important;
+    }
+    li {
+        display: list-item;
+        text-align: -webkit-match-parent;
+        font-size: 1.3em !important;
+        ::marker {
+            unicode-bidi: isolate;
+            font-variant-numeric: tabular-nums;
+            text-transform: none;
+            text-indent: 0px !important;
+            text-align: start !important;
+            text-align-last: start !important;
+        }
+        li {
+            display: list-item;
+            text-align: -webkit-match-parent;
+            font-size: 1.0em !important;
+            ::marker {
+                unicode-bidi: isolate;
+                font-variant-numeric: tabular-nums;
+                text-transform: none;
+                text-indent: 0px !important;
+                text-align: start !important;
+                text-align-last: start !important;
+            }
+        }
+    }
+    .hljs {
+        display: block;
+        overflow-x: auto;
+        padding: 0.1rem;
+        line-height: 1.4 !important;
+        font-size: 0.2rem !important;
+        background: #f3f4f5;
+        color: #5e6687;
+        border-radius: 0.04rem;
+    }
+}
+
 
 @keyframes loading{
     0% {

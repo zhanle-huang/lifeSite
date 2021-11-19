@@ -155,7 +155,7 @@
 
 #### 3. 添加demo收藏
 
-1. API：POST/user/collect/demo
+1. API：POST/collect/demo
 
 2. 参数：
 
@@ -178,7 +178,7 @@
 
 #### 4. 取消demo收藏
 
-1. API：DELETE/user/collect/demo
+1. API：DELETE/collect/demo
 
 2. 参数：
 

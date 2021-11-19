@@ -2,8 +2,9 @@
     <div class="home full-height">
         <div class="content container">
             <el-carousel class="carousel" :interval="5000" arrow="always">
-                <el-carousel-item v-for="item in 4" :key="item">
-                    <h3>{{ item }}</h3>
+                <el-carousel-item v-for="item in carouselList" :key="item.id">
+                    <!-- <h3>{{ item.desc }}</h3> -->
+                    <img class="carousel-img" :src="item.src" alt="">
                 </el-carousel-item>
             </el-carousel>
         </div>
@@ -11,12 +12,36 @@
 </template>
 
 <script>
-    // import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
+    import { commonReq } from '@/api/index.js';
     export default {
         name: 'Home',
         components: {},
         setup() {
-
+            // 定义变量
+            let carouselList = ref([]);
+            
+            // 定义方法
+            function getCarousel() {
+                commonReq.getCourselList().then(res => {
+                    if (res.status === 1) {
+                        res.data.list.map(item => {
+                            // item.src = require('http://localhost:3002/lifeSite' + item.src);
+                            item.src = 'http://localhost:3002/lifeSite' + item.src
+                            // console.log(item)
+                        })
+                        console.log(res.data.list)
+                        carouselList.value = res.data.list;
+                    }
+                })
+            }
+            
+            // 方法调用
+            getCarousel();
+            
+            return {
+                carouselList
+            }
         },
         mounted() {
             console.log('mounted')
@@ -36,6 +61,12 @@
                 }
                 /deep/.el-carousel__button {
                     
+                }
+                .carousel-img {
+                    display: block;
+                    width: 100%;
+                    // height: auto;
+                    height: 100%;
                 }
             }
             .el-carousel__item h3 {

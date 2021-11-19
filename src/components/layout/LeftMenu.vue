@@ -18,75 +18,34 @@
 </template>
 
 <script>
+    import { toRefs, reactive, inject, onMounted } from 'vue';
     export default {
+        props: ['menuList'],
+        setup(props) {
+            // 定义变量
+            // 定义方法
+            // console.log('props', props.menuList)
+            // let menuList1 = reactive(props.menuList)
+            // console.log('menuList1', menuList1)
+            // // 调用方法
+            return {
+                // userLocation
+            }
+        },
         data() {
             return {
-                curMenu: '',
-                menuList: [
-                    {
-                        title: 'web',
-                        menu: [
-                            {
-                                title: 'html',
-                                type: 'html'
-                            },
-                            {
-                                title: 'css',
-                                type: 'css'
-                            },
-                            {
-                                title: 'js',
-                                type: 'js'
-                            },
-                            {
-                                title: 'mySql',
-                                type: 'mySql'
-                            }
-                        ]
-                    },
-                    {
-                        title: 'web2',
-                        menu: [
-                            {
-                                title: 'html',
-                                type: 'html1'
-                            },
-                            {
-                                title: 'css',
-                                type: 'css2'
-                            },
-                            {
-                                title: 'js',
-                                type: 'js3'
-                            },
-                            {
-                                title: 'mySql',
-                                type: 'mySql4'
-                            }
-                        ]
-                    },
-                    {
-                        title: 'web3',
-                        menu: [
-                            {
-                                title: 'html',
-                                type: 'html12'
-                            },
-                            {
-                                title: 'css',
-                                type: 'css23'
-                            },
-                            {
-                                title: 'js',
-                                type: 'js33'
-                            },
-                            {
-                                title: 'mySql',
-                                type: 'mySql44'
-                            }
-                        ]
+                curMenu: ''
+            }
+        },
+        watch: {
+            menuList: {
+                handler(v) {
+                    console.log('watch', v)
+                    if (v.length > 0) {
+                        this.selectMenu(this.menuList[0].menu[0])
                     }
-                ]
+                },
+                deep: true
             }
         },
         methods: {
@@ -96,10 +55,12 @@
              * */
             selectMenu(menu) {
                 this.curMenu = menu.type
-                this.$emit('select-menu', menu.type)
+                this.$emit('select-menu', menu)
             }
         },
         mounted() {
+            console.log('ccc', this.menuList)
+            // this.selectMenu(this.menuList[0].menu[0])
         }
     }
 </script>

@@ -11,6 +11,7 @@
     import Footer from '@/components/layout/Footer.vue'
     import whiteName from 'static/json/whiteName.json'
     import fulScreenName from 'static/json/fulScreenName.json'
+    import { mapMutations } from 'vuex';
     export default {
         components: {
             Footer
@@ -37,6 +38,16 @@
                 }
             }
         },
+        methods: {
+            ...mapMutations(['updateParams'])
+        },
+        created() {
+            let userInfo = localStorage.getItem('userInfo');
+            if (userInfo) {
+                this.updateParams(['loginStatus', true])
+                this.updateParams(['userInfo', userInfo])
+            }
+        }
     }
 </script>
 

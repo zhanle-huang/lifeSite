@@ -10,19 +10,25 @@
             </ul>
         </div>
         <div class="right">
-            <div class="userInfo">
+            <div class="userInfo" v-if="loginStatus" @click="gotoWirte">
+                <img class="user-img" src="../../assets/image/logo.png"/>
+                <span class="user-title">创作</span>
+            </div>
+            <div class="userInfo" v-if="loginStatus">
                 <img class="user-img" src="../../assets/image/logo.png"/>
                 <span class="user-title">个人中心</span>
             </div>
             <div class="ctrl-btn">
-                <el-button class="login" type="primary" @click="$router.push('/login')">登录</el-button>
-                <el-button class="register"  @click="$router.push('/register')">注册</el-button>
+                <el-button class="login" type="primary" @click="$router.push('/login')" v-if="!loginStatus">登录</el-button>
+                <el-button class="register"  @click="$router.push('/register')" v-if="!loginStatus">注册</el-button>
+                <el-button class="register" plain v-if="loginStatus" @click="exitLogin">退出</el-button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import { mapState, mapMutations } from 'vuex';
     export default {
         props: ['curType'],
         data() {
@@ -52,6 +58,11 @@
                 ]
             }
         },
+        computed: {
+            ...mapState({
+                loginStatus: state => state.loginStatus
+            })
+        },
         watch: {
             curType(v) {
                 this.curMenu = v
@@ -65,7 +76,21 @@
             selectMenu(item) {
                 this.curMenu = item.type
                 this.$router.push(item.path)
+            },
+            // 跳转到创作页面
+            gotoWirte() {
+                this.$router.push('/article-edit')
+            },
+            // 退出登录
+            exitLogin() {
+                localStorage.removeItem('userInfo');
+                this.updateParams(['loginStatus', false])
+                this.updateParams(['userInfo', {}])
+                console.log(this.loginStatus)
             }
+        },
+        created() {
+            this.curMenu = this.$route.fullPath.substr(1)
         }
     }
 </script>

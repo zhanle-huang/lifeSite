@@ -3,7 +3,7 @@
         <div class="bg"></div>
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="手机号" prop="phone">
-                <el-input type="text" v-model.number="ruleForm.phone"></el-input>
+                <el-input type="text" v-model="ruleForm.phone"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="pass">
                 <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
@@ -19,6 +19,8 @@
 <script>
     import { ref } from 'vue';
     import { validatePhone, validatePass } from '@/utils/common/rules.js';
+    import { userReq } from '@/api/index.js';
+    import { mapMutations } from 'vuex';
 	export default {
         setup() {
             // 获取验证码
@@ -52,7 +54,28 @@
 			submitForm(formName) {  //提交注册
 				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						console.log(this.ruleForm)
+                        let param = {
+                            phone: this.ruleForm.phone,
+                            password: this.ruleForm.pass
+                        }
+                        userReq.login(param).then(res => {
+                            if (res.status === 1) {
+                                this.$message({
+                                    message: '登录成功！',
+                                    type: 'success'
+                                });
+                                localStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
+                                this.updateParams(['loginStatus', true])
+                                this.updateParams(['userInfo', res.data.userInfo])
+                                setTimeout(() => {
+                                    this.$router.push({path: '/home'})
+                                }, 1000)
+                            } else {
+                                this.$message.error(res.msg);
+                            }
+                        }).catch(err => {
+                            this.$message.error(err);
+                        })
 						// var {status,message} = await axios.post('/myblok/register',this.ruleForm);
 						// if(status === 0) {
 						// 	this.loginErr('注册成功！');

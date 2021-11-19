@@ -51,7 +51,7 @@ module.exports = {
                 .use('sass-resources-loader')
                 .loader('sass-resources-loader')
                 .options({
-                    // 这里填入你的样式文件地址
+                    // 这里填入你的样式文件地址,也可以是数组
                     resources: './src/assets/css/common.less'
                 })
                 .end()
@@ -60,15 +60,26 @@ module.exports = {
     // 修改webpack配置
     configureWebpack: (config) => {
         // 配置全局引入
-        const providePlugin = new webpack.ProvidePlugin({})
+        const providePlugin = new webpack.ProvidePlugin({
+            $http: path.join(__dirname, 'src/api/http.js')
+        })
         config.plugins.push(providePlugin)
     },
     devServer: {
         port: 3002,
         overlay: {
             // 显示在页面上
-            // warnings: true,
+            warnings: false,
             errors: true
+        },
+        proxy: {
+        	'/lifeSite': {
+                target: 'http://127.0.0.1:3000/lifeSite/',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/lifeSite': '/'
+                }
+            }
         }
     }
 }

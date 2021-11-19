@@ -2,7 +2,7 @@
     <div class="article">
         <div class="head-menu">
             <ul class="show-menu">
-                <li :class="['menu-item', {'active': curTag === index}]" v-for="(item, index) in tagList" :key="index" @click="selectTag(item, index)">
+                <li :class="['menu-item', {'active': curTag === index}]" v-for="(item, index) in tagList" :key="item.id" @click="selectTag(item, index)">
                     <el-tag :type="menuTagType[tagIndex[index]]">{{item.name}}</el-tag>
                 </li>
             </ul>
@@ -28,6 +28,7 @@
     import ArticleList from '@/components/article/ArticleList.vue';
     import ArticleLeftNav from '@/components/article/ArticleLeftNav.vue';
     import { ref, reactive, toRefs } from 'vue';
+    import { artcleReq } from '@/api/index.js';
     export default {
         components: {
             ArticleList,
@@ -37,52 +38,54 @@
             // 定义变量
             const menuTagType = reactive(['', 'success', 'info', 'warning', 'danger']);
             let curTag = ref(0);
-            let tagList = reactive([])
+            let tagList = ref([])
             let pageNum = ref(1); // 页码
             let pageSize = ref(10); // 页大小
             let total = ref(100); // 总数
-            let articleList = reactive([]);
+            let articleList = ref([]);
             // 定义方法
             // 选中tag
             function selectTag(item, index) {
                 curTag.value = index
             }
+            // 获取tag列表数据
+            function getTagList() {
+                let param = {
+                    pageNum: 1,
+                    pageSize: 20
+                }
+                artcleReq.getTagList(param).then(res => {
+                    console.log(res.data)
+                    tagList.value = res.data.list
+                })
+            }
             // 页大小改变
             const handleSizeChange = (val) => {
                 console.log(`${val} items per page`);
+                pageNum.value = val;
+                getArticleList()
             }
             // 页码该改变
             const handleCurrentChange = (val) => {
                 console.log(`current page: ${val}`);
-            }
-            // 获取tag列表数据
-            function getTagList() {
-                tagList = reactive([
-                    {name: 'tag1', type: '11'}, {name: 'tag2', type: '22'}, {name: 'tag3', type: '33'}, {name: 'tag4', type: '44'}, {name: 'tag5', type: '55'}
-                ]);
+                pageNum.value = val;
+                getArticleList()
             }
             /// 获取文章列表
             function getArticleList() {
-                let temp = [
-                    {
-                        img: require('@/assets/image/bg.jpg'),
-                        title: '这是一段不知名的标题撒娇看到啥看到哈十九点啥叫客户端看见撒谎的看就撒谎框架洒家打开手机打算看了',
-                        createTime: '2021-02-20 13:56:11',
-                        authorName: '小阿阿萨的',
-                        authorSrc: require('@/assets/image/bg.jpg'),
-                        readNum: 12010,
-                        commendNum: 4546,
-                        likeNum: 445
-                    }
-                ];
-                temp = [...temp, ...temp];
-                temp = [...temp, ...temp];
-                temp = [...temp, ...temp];
-                console.log(temp)
-                articleList = reactive(temp)
+                console.log(pageNum, pageSize)
+                let param = {
+                    pageNum: pageNum.value,
+                    pageSize: pageSize.value
+                }
+                artcleReq.getArticleList(param).then(res => {
+                    console.log(res.data)
+                    articleList.value = res.data.list
+                    total.value = res.data.total
+                })
             }
             // 方法调用
-            getTagList();
+            getTagList()
             getArticleList();
             return {
                 curTag,
