@@ -17,6 +17,8 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "moment": "^2.29.1",
+    "nprogress": "^0.2.0",
+    "qiankun": "^2.7.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vue3-markdown-it": "^1.0.9",

@@ -55,6 +55,11 @@
                         type: 'leaving',
                         path: '/leaving'
                     },
+                    {
+                        name: 'map',
+                        type: 'map',
+                        path: '/map'
+                    },
                 ]
             }
         },
