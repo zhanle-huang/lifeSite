@@ -12,11 +12,11 @@ jobs:
     steps:
       # 1. 拉取代码
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. 设置 Node.js 环境
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18   # 根据项目需要选择 Node 版本
 
@@ -30,7 +30,7 @@ jobs:
 
       # 5. （可选）将构建产物保存为 artifact
       - name: Upload production-ready build files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
