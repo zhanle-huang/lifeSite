@@ -18,17 +18,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18   # 根据项目需要选择 Node 版本
+          node-version: 18
+          cache: 'npm'  # 缓存 npm 依赖，加快后续构建
 
-      # 3. 安装依赖（使用 npm ci 更快）
+      # 3. 安装依赖（确保安装 devDependencies）
       - name: Install dependencies
-        run: npm ci
+        run: npm install --include=dev
+        # 如果要更快可用 npm ci，但需确保 package-lock.json 最新
 
-      # 4. 构建项目
+      # 4. 检查 vue-cli-service 是否存在 (debug)
+      - name: Verify vue-cli-service
+        run: ls -la node_modules/.bin
+
+      # 5. 构建项目（用 npx 确保本地 node_modules/.bin 可执行）
       - name: Build project
-        run: npm run build
+        run: npx vue-cli-service build
 
-      # 5. （可选）将构建产物保存为 artifact
+      # 6. （可选）将构建产物保存为 artifact
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:
