@@ -1,32 +1,32 @@
-name: Frontend Build  # Workflow 名称，显示在 GitHub Actions 列表中
+name: Frontend Build  # Workflow 名称
 
 on:
   push:
     branches:
-      - main          # 当推送到 main 分支时触发 Workflow
+      - main  # 仅在推送到 main 分支时触发
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 指定运行环境（Ubuntu 最新版本）
+    runs-on: ubuntu-latest  # 使用 Ubuntu Runner
 
     steps:
       # 1. 拉取代码
       - name: Checkout repository
-        uses: actions/checkout@v4  # 将当前仓库代码签出到 runner 环境
+        uses: actions/checkout@v4
 
-      # 2. 打印 Node 和 NPM 版本（调试用）
+      # 2. 打印 Node 和 NPM 版本
       - name: Debug Node & NPM
         run: |
-          node -v                 # 输出 Node.js 版本
-          npm -v                  # 输出 npm 版本
+          node -v
+          npm -v
 
-      # 3. 设置 Node.js 环境
+      # 3. 设置 Node.js 版本（改为 14.x）
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18       # 使用 Node.js 18 版本
+          node-version: 14.x  # 使用 Node.js 14 LTS
 
-      # 4. 缓存 node_modules，基于 package-lock.json 变化自动失效
+      # 4. 缓存 node_modules
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
@@ -35,27 +35,29 @@ jobs:
           restore-keys: |
             node-modules-
 
-      # 5. 安装依赖（优先用 npm ci，保证锁文件一致）
-      #    然后强制安装 @vue/cli-service 避免缺失
+      # 5. 安装依赖并确保 @vue/cli-service 存在
       - name: Install dependencies
         run: |
-          npm ci --legacy-peer-deps
+          echo "安装依赖..."
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+          echo "强制安装 @vue/cli-service..."
           npm install @vue/cli-service@~4.5.0 --save-dev
 
-      # 6. 检查 vue-cli-service 是否存在且可执行
+      # 6. 打印调试信息
       - name: Debug vue-cli-service
         run: |
-          if ! [ -x "./node_modules/.bin/vue-cli-service" ]; then
-            echo "❌ vue-cli-service 缺失，构建失败"
-            exit 1
-          fi
-          echo "✅ vue-cli-service 检查通过"
+          echo "列出 vue-cli-service 安装情况:"
+          npm list @vue/cli-service || true
+          echo "查看 node_modules/.bin:"
+          ls -la node_modules/.bin || echo ".bin 不存在"
+          echo "查找 vue-cli-service 文件路径:"
+          find node_modules -name "vue-cli-service" || echo "未找到 vue-cli-service 文件"
 
-      # 7. 执行构建
+      # 7. 构建（直接调用 CLI 脚本，绕过 .bin 缺失问题）
       - name: Build project
-        run: npm run build
+        run: node node_modules/@vue/cli-service/bin/vue-cli-service.js build
 
-      # 8. 上传构建产物（dist 文件夹）
+      # 8. 上传构建产物
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:
