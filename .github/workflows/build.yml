@@ -41,7 +41,7 @@ jobs:
           echo "安装依赖..."
           npm ci --legacy-peer-deps || npm install --legacy-peer-deps
           echo "强制安装 @vue/cli-service..."
-          npm install @vue/cli-service@~4.5.0 --save-dev
+          # npm install @vue/cli-service@~4.5.0 --save-dev
 
       # 6. 打印调试信息
       - name: Debug vue-cli-service
