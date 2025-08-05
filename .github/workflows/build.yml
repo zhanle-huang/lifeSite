@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4  # 将当前仓库代码签出到 runner 环境
 
-      # 2. 打印 Node 和 NPM 版本（调试用，方便确认 CI 环境版本）
+      # 2. 打印 Node 和 NPM 版本（调试用）
       - name: Debug Node & NPM
         run: |
           node -v                 # 输出 Node.js 版本
@@ -22,49 +22,42 @@ jobs:
 
       # 3. 设置 Node.js 环境
       - name: Setup Node.js
-        uses: actions/setup-node@v4  # 官方 Node.js 配置 Action
+        uses: actions/setup-node@v4
         with:
-          node-version: 18          # 使用 Node.js 18 版本
+          node-version: 18       # 使用 Node.js 18 版本
 
-      # 4. 缓存 node_modules
+      # 4. 缓存 node_modules，基于 package-lock.json 变化自动失效
       - name: Cache node_modules
-        uses: actions/cache@v4       # 缓存依赖以加快后续构建
+        uses: actions/cache@v4
         with:
-          path: |
-            node_modules             # 缓存 node_modules 文件夹
-          key: node-modules-${{ hashFiles('package-lock.json') }}  # 依赖缓存 Key，基于 package-lock.json
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            node-modules-            # 回退 Key（即使 package-lock.json 改变，也会尝试恢复旧缓存）
+            node-modules-
 
-      # 5. 安装依赖（强制包含 devDependencies）
+      # 5. 安装依赖（优先用 npm ci，保证锁文件一致）
+      #    然后强制安装 @vue/cli-service 避免缺失
       - name: Install dependencies
         run: |
-          echo "安装依赖（包括 devDependencies）..."
-          # rm -rf node_modules package-lock.json    # 删除旧依赖和锁文件，避免缓存污染
-          # npm install --include=dev --legacy-peer-deps --force  # 安装依赖并强制包含 devDependencies
           npm ci --legacy-peer-deps
+          npm install @vue/cli-service@~4.5.0 --save-dev
 
-      # 6. 检查 vue-cli-service 是否存在
+      # 6. 检查 vue-cli-service 是否存在且可执行
       - name: Debug vue-cli-service
         run: |
-          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
-            echo "❌ vue-cli-service 缺失，尝试手动补链..."
-            npm rebuild @vue/cli-service            # 重新构建 @vue/cli-service，确保 .bin 文件生成
-          fi
-
-          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
-            echo "❌ vue-cli-service 仍不存在，构建失败"
-            exit 1                                  # 如果仍然缺失，退出 CI
+          if ! [ -x "./node_modules/.bin/vue-cli-service" ]; then
+            echo "❌ vue-cli-service 缺失，构建失败"
+            exit 1
           fi
           echo "✅ vue-cli-service 检查通过"
 
-      # 7. 构建项目
+      # 7. 执行构建
       - name: Build project
-        run: npm run build                         # 执行 package.json 中的 build 脚本（vue-cli-service build）
+        run: npm run build
 
-      # 8. 上传构建产物
+      # 8. 上传构建产物（dist 文件夹）
       - name: Upload production-ready build files
-        uses: actions/upload-artifact@v4          # 上传构建结果（dist 文件夹）
+        uses: actions/upload-artifact@v4
         with:
-          name: dist                              # artifact 名称
-          path: dist/                             # 上传 dist 文件夹
+          name: dist
+          path: dist/
