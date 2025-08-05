@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "安装依赖（包括 devDependencies）..."
-          rm -rf node_modules package-lock.json    # 删除旧依赖和锁文件，避免缓存污染
+          # rm -rf node_modules package-lock.json    # 删除旧依赖和锁文件，避免缓存污染
           npm install --include=dev --legacy-peer-deps --force  # 安装依赖并强制包含 devDependencies
 
       # 6. 检查 vue-cli-service 是否存在
