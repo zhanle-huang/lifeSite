@@ -1,69 +1,68 @@
-name: Frontend Build
+name: Frontend Build  # Workflow 名称，在 GitHub Actions 中显示
 
 on:
   push:
     branches:
-      - main
+      - main  # 仅在推送到 main 分支时触发此工作流
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 指定在最新的 Ubuntu Runner 上执行
 
     steps:
       # 1. 拉取代码
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # 使用官方 checkout action，将仓库代码检出到 runner 环境
 
       # 2. 打印 Node 和 NPM 版本
       - name: Debug Node & NPM
         run: |
-          node -v
-          npm -v
+          node -v  # 输出 Node.js 版本，方便调试确认环境
+          npm -v   # 输出 npm 版本，确保 npm 版本符合预期
 
       # 3. 设置 Node.js 环境
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        id: node  # 设置 ID，方便后续引用版本号
+        uses: actions/setup-node@v4  # 官方 Node.js 设置 Action
         with:
-          node-version: 18
+          node-version: 18  # 指定 Node.js 版本为 18（LTS 版本）
 
       # 4. 缓存 node_modules
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v4  # 使用官方缓存 Action
         with:
-          path: |
-            node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
+          path: node_modules  # 缓存 node_modules 文件夹，加快依赖安装
+          key: node-modules-${{ runner.os }}-${{ steps.node.outputs.node-version }}-${{ hashFiles('package-lock.json') }} 
+          # 缓存 key 由 操作系统 + Node 版本 + package-lock.json 哈希 组成
           restore-keys: |
-            node-modules-
+            node-modules-${{ runner.os }}-${{ steps.node.outputs.node-version }}-
+            # 回退缓存 key，当 package-lock.json 改变时，尝试使用旧缓存
 
-      # 5. 安装依赖（强制包含 devDependencies）
+      # 5. 设置 NODE_ENV=development
+      - name: Set NODE_ENV
+        run: echo "NODE_ENV=development" >> $GITHUB_ENV
+        # 强制设置 NODE_ENV 为 development，确保 devDependencies 被正确安装
+
+      # 6. 安装依赖（优先 npm ci）
       - name: Install dependencies
         run: |
-          echo "安装依赖（包括 devDependencies）..."
-          rm -rf node_modules package-lock.json
-          npm install --include=dev --legacy-peer-deps --force
-
-      # 6. 检查 vue-cli-service 是否存在
-      - name: Debug vue-cli-service
-        run: |
-          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
-            echo "❌ vue-cli-service 缺失，尝试手动补链..."
-            npm rebuild @vue/cli-service
+          if [ ! -d "node_modules" ]; then
+            echo "首次安装依赖..."
+            npm ci || npm install --include=dev --legacy-peer-deps
+            # 优先使用 npm ci（基于 package-lock.json 安装），失败则回退 npm install
+          else
+            echo "✅ 命中缓存，跳过依赖安装"
+            # 如果 node_modules 缓存存在，则跳过重新安装
           fi
-
-          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
-            echo "❌ vue-cli-service 仍不存在，构建失败"
-            exit 1
-          fi
-          echo "✅ vue-cli-service 检查通过"
 
       # 7. 构建项目
       - name: Build project
         run: npm run build
+        # 执行 package.json 中的 build 脚本（内部调用 vue-cli-service build）
 
       # 8. 上传构建产物
       - name: Upload production-ready build files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4  # 上传构建结果供后续使用或下载
         with:
-          name: dist
-          path: dist/
+          name: dist  # artifact 名称
+          path: dist/ # 上传 dist 文件夹（Vue CLI 的默认构建输出目录）
