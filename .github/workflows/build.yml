@@ -1,65 +1,71 @@
-name: Frontend Build  # Workflow 名称
+name: Frontend Build  # Workflow 名称，在 GitHub Actions 界面中显示
 
 on:
   push:
     branches:
-      - main  # 仅在推送到 main 分支时触发
+      - main  # 当代码推送到 main 分支时，触发此 Workflow
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 使用 Ubuntu Runner
+    runs-on: ubuntu-latest  # 使用 GitHub 提供的 Ubuntu 最新版本作为运行环境
 
     steps:
       # 1. 拉取代码
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repository  # 步骤名称：检出仓库代码
+        uses: actions/checkout@v4  # 使用官方 actions/checkout Action，将当前仓库代码拉取到 GitHub Runner
 
       # 2. 打印 Node 和 NPM 版本
-      - name: Debug Node & NPM
+      - name: Debug Node & NPM  # 步骤名称：调试 Node.js 和 npm 版本
         run: |
-          node -v
-          npm -v
+          node -v  # 输出 Node.js 版本，用于确认 Node.js 是否正确安装
+          npm -v   # 输出 npm 版本，用于确认 npm 包管理工具是否可用
 
-      # 3. 设置 Node.js 版本（改为 14.x）
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # 3. 设置 Node.js 版本
+      - name: Setup Node.js  # 步骤名称：配置 Node.js 环境
+        uses: actions/setup-node@v4  # 使用 GitHub 官方 Node.js 设置 Action
         with:
-          node-version: 14.x  # 使用 Node.js 14 LTS
+          node-version: 14.x  # 指定 Node.js 版本为 14 LTS，确保与 Vue CLI 4.x 兼容
 
-      # 4. 缓存 node_modules
-      - name: Cache node_modules
-        uses: actions/cache@v4
+      # 4. 缓存 node_modules 目录
+      - name: Cache node_modules  # 步骤名称：缓存依赖目录
+        uses: actions/cache@v4  # 使用 GitHub 官方缓存 Action
         with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          path: node_modules  # 需要缓存的路径，这里是 node_modules 目录
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}  
+          # 缓存 Key：由操作系统 + package-lock.json 文件哈希组成，确保依赖一致时直接复用缓存
           restore-keys: |
-            node-modules-
+            node-modules-  # 如果 key 不匹配，则使用以 node-modules- 开头的旧缓存作为回退
 
       # 5. 安装依赖并确保 @vue/cli-service 存在
-      - name: Install dependencies
+      - name: Install dependencies  # 步骤名称：安装依赖
         run: |
-          echo "安装依赖..."
-          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-          echo "强制安装 @vue/cli-service..."
-          npm install @vue/cli-service@~4.5.0 --save-dev
+          echo "安装依赖..."  # 打印提示信息
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps  
+          # 使用 npm ci 安装依赖（根据锁文件安装，速度快且更稳定），
+          # 如果失败则回退到 npm install，添加 --legacy-peer-deps 解决旧项目依赖冲突问题
+          # 下面代码被注释掉了：可以用于在 vue-cli-service 缺失时强制安装
+          # if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
+            # echo "⚠️ vue-cli-service 缺失，重新安装 @vue/cli-service..."
+            # npm install @vue/cli-service@~4.5.0 --save-dev
+          # fi
 
-      # 6. 打印调试信息
-      - name: Debug vue-cli-service
+      # 6. 打印调试信息，确认依赖安装是否正常
+      - name: Debug vue-cli-service  # 步骤名称：调试 vue-cli-service 安装状态
         run: |
-          echo "列出 vue-cli-service 安装情况:"
-          npm list @vue/cli-service || true
-          echo "查看 node_modules/.bin:"
-          ls -la node_modules/.bin || echo ".bin 不存在"
-          echo "查找 vue-cli-service 文件路径:"
-          find node_modules -name "vue-cli-service" || echo "未找到 vue-cli-service 文件"
+          echo "列出 vue-cli-service 安装情况:"  # 打印提示信息
+          # npm list @vue/cli-service || true  # 列出 vue-cli-service 安装信息（已注释）
+          # echo "查看 node_modules/.bin:"  
+          # ls -la node_modules/.bin || echo ".bin 不存在"  # 检查 .bin 目录是否存在（已注释）
+          # echo "查找 vue-cli-service 文件路径:"  
+          # find node_modules -name "vue-cli-service" || echo "未找到 vue-cli-service 文件"  # 搜索 vue-cli-service 文件路径（已注释）
 
-      # 7. 构建（直接调用 CLI 脚本，绕过 .bin 缺失问题）
-      - name: Build project
-        run: node node_modules/@vue/cli-service/bin/vue-cli-service.js build
+      # 7. 构建项目（使用 npm run build）
+      - name: Build project  # 步骤名称：构建项目
+        run: npm run build  # 执行 package.json 中的 build 脚本，调用 vue-cli-service build 进行打包
 
-      # 8. 上传构建产物
-      - name: Upload production-ready build files
-        uses: actions/upload-artifact@v4
+      # 8. 上传构建产物（dist 目录）
+      - name: Upload production-ready build files  # 步骤名称：上传构建产物
+        uses: actions/upload-artifact@v4  # 使用官方 upload-artifact Action
         with:
-          name: dist
-          path: dist/
+          name: dist  # 构建产物名称，在 GitHub Actions 的 artifacts 列表中显示
+          path: dist/ # 指定要上传的路径（Vue CLI 默认输出目录）
