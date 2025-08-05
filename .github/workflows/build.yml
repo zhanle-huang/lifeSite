@@ -3,7 +3,7 @@ name: Frontend Build
 on:
   push:
     branches: 
-      - main   # 当代码推送到 main 分支时触发
+      - main
 
 jobs:
   build:
@@ -14,38 +14,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. 设置 Node.js 环境
+      # 2. 打印 Node 和 NPM 版本
+      - name: Debug Node & NPM
+        run: |
+          node -v
+          npm -v
+
+      # 3. 设置 Node.js 环境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18          # Node 版本
-          cache: 'npm'              # 缓存 npm 依赖，加快后续构建
+          node-version: 18
+          cache: 'npm'
 
-      # 3. 安装依赖（先尝试 npm ci，如果失败则回退 npm install）
+      # 4. 安装依赖 (优先 npm ci，失败则 npm install --include=dev)
       - name: Install dependencies
         run: |
-          echo "尝试使用 npm ci 安装依赖"
-          npm ci || (echo "npm ci 失败，改用 npm install" && npm install --include=dev)
+          echo "尝试 npm ci 安装依赖..."
+          npm ci || (echo "npm ci 失败，改用 npm install --include=dev" && npm install --include=dev)
+          echo "✅ 安装完成"
 
-      # 4. 检查 node_modules 是否安装成功（debug）
-      - name: Verify node_modules
+      # 5. 列出 node_modules 目录确认依赖是否安装成功
+      - name: Debug node_modules
         run: |
-          if [ ! -d "node_modules" ]; then
-            echo "❌ node_modules 未生成，依赖安装失败！"
-            exit 1
-          fi
-          echo "✅ node_modules 存在"
+          ls -la || true
+          ls -la node_modules || echo "❌ node_modules 不存在"
+          ls -la node_modules/.bin || echo "❌ .bin 不存在"
 
-      # 5. 检查 vue-cli-service 是否存在 (debug)
-      - name: Verify vue-cli-service
+      # 6. 打印已安装的 vue-cli-service
+      - name: Check vue-cli-service
         run: |
-          ls -la node_modules/.bin || (echo "❌ .bin 不存在，依赖未正确安装" && exit 1)
+          npm list @vue/cli-service || echo "❌ vue-cli-service 未安装"
 
-      # 6. 构建项目（使用 npx 确保本地 node_modules/.bin 可执行）
+      # 7. 构建项目
       - name: Build project
         run: npx vue-cli-service build
 
-      # 7. （可选）将构建产物保存为 artifact，方便下载调试
+      # 8. 上传构建产物
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:
