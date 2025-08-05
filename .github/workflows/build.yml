@@ -3,7 +3,7 @@ name: Frontend Build
 on:
   push:
     branches: 
-      - main
+      - main  # 推送到 main 分支时触发
 
 jobs:
   build:
@@ -27,28 +27,33 @@ jobs:
           node-version: 18
           cache: 'npm'
 
-      # 4. 安装依赖 (优先 npm ci，失败则 npm install --include=dev)
+      # 4. 安装依赖（确保 devDependencies 安装）
       - name: Install dependencies
         run: |
           echo "尝试 npm ci 安装依赖..."
-          npm ci || (echo "npm ci 失败，改用 npm install --include=dev" && npm install --include=dev)
-          echo "✅ 安装完成"
+          npm ci || (echo "npm ci 失败，改用 npm install --include=dev --legacy-peer-deps" && npm install --include=dev --legacy-peer-deps)
+          echo "✅ 依赖安装完成"
 
-      # 5. 列出 node_modules 目录确认依赖是否安装成功
+      # 5. 确认 node_modules 及 .bin 目录
       - name: Debug node_modules
         run: |
           ls -la || true
           ls -la node_modules || echo "❌ node_modules 不存在"
           ls -la node_modules/.bin || echo "❌ .bin 不存在"
 
-      # 6. 打印已安装的 vue-cli-service
-      - name: Check vue-cli-service
+      # 6. 检查 vue-cli-service 是否安装正确，若缺失则自动安装
+      - name: Ensure vue-cli-service
         run: |
-          npm list @vue/cli-service || echo "❌ vue-cli-service 未安装"
+          if ! npm list @vue/cli-service >/dev/null 2>&1; then
+            echo "⚠️ vue-cli-service 缺失，自动安装 @vue/cli-service@4.5.0 ..."
+            npm install @vue/cli-service@4.5.0 --save-dev
+          else
+            echo "✅ vue-cli-service 已安装"
+          fi
 
-      # 7. 构建项目
+      # 7. 构建项目（使用本地 vue-cli-service）
       - name: Build project
-        run: npx vue-cli-service build
+        run: ./node_modules/.bin/vue-cli-service build
 
       # 8. 上传构建产物
       - name: Upload production-ready build files
