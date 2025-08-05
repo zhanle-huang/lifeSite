@@ -1,68 +1,69 @@
-name: Frontend Build  # Workflow 名称，在 GitHub Actions 中显示
+name: Frontend Build  # Workflow 名称，显示在 GitHub Actions 列表中
 
 on:
   push:
     branches:
-      - main  # 仅在推送到 main 分支时触发此工作流
+      - main          # 当推送到 main 分支时触发 Workflow
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 指定在最新的 Ubuntu Runner 上执行
+    runs-on: ubuntu-latest  # 指定运行环境（Ubuntu 最新版本）
 
     steps:
       # 1. 拉取代码
       - name: Checkout repository
-        uses: actions/checkout@v4  # 使用官方 checkout action，将仓库代码检出到 runner 环境
+        uses: actions/checkout@v4  # 将当前仓库代码签出到 runner 环境
 
-      # 2. 打印 Node 和 NPM 版本
+      # 2. 打印 Node 和 NPM 版本（调试用，方便确认 CI 环境版本）
       - name: Debug Node & NPM
         run: |
-          node -v  # 输出 Node.js 版本，方便调试确认环境
-          npm -v   # 输出 npm 版本，确保 npm 版本符合预期
+          node -v                 # 输出 Node.js 版本
+          npm -v                  # 输出 npm 版本
 
       # 3. 设置 Node.js 环境
       - name: Setup Node.js
-        id: node  # 设置 ID，方便后续引用版本号
-        uses: actions/setup-node@v4  # 官方 Node.js 设置 Action
+        uses: actions/setup-node@v4  # 官方 Node.js 配置 Action
         with:
-          node-version: 18  # 指定 Node.js 版本为 18（LTS 版本）
+          node-version: 18          # 使用 Node.js 18 版本
 
       # 4. 缓存 node_modules
       - name: Cache node_modules
-        uses: actions/cache@v4  # 使用官方缓存 Action
+        uses: actions/cache@v4       # 缓存依赖以加快后续构建
         with:
-          path: node_modules  # 缓存 node_modules 文件夹，加快依赖安装
-          key: node-modules-${{ runner.os }}-${{ steps.node.outputs.node-version }}-${{ hashFiles('package-lock.json') }} 
-          # 缓存 key 由 操作系统 + Node 版本 + package-lock.json 哈希 组成
+          path: |
+            node_modules             # 缓存 node_modules 文件夹
+          key: node-modules-${{ hashFiles('package-lock.json') }}  # 依赖缓存 Key，基于 package-lock.json
           restore-keys: |
-            node-modules-${{ runner.os }}-${{ steps.node.outputs.node-version }}-
-            # 回退缓存 key，当 package-lock.json 改变时，尝试使用旧缓存
+            node-modules-            # 回退 Key（即使 package-lock.json 改变，也会尝试恢复旧缓存）
 
-      # 5. 设置 NODE_ENV=development
-      - name: Set NODE_ENV
-        run: echo "NODE_ENV=development" >> $GITHUB_ENV
-        # 强制设置 NODE_ENV 为 development，确保 devDependencies 被正确安装
-
-      # 6. 安装依赖（优先 npm ci）
+      # 5. 安装依赖（强制包含 devDependencies）
       - name: Install dependencies
         run: |
-          if [ ! -d "node_modules" ]; then
-            echo "首次安装依赖..."
-            npm ci || npm install --include=dev --legacy-peer-deps
-            # 优先使用 npm ci（基于 package-lock.json 安装），失败则回退 npm install
-          else
-            echo "✅ 命中缓存，跳过依赖安装"
-            # 如果 node_modules 缓存存在，则跳过重新安装
+          echo "安装依赖（包括 devDependencies）..."
+          # rm -rf node_modules package-lock.json    # 删除旧依赖和锁文件，避免缓存污染
+          npm install --include=dev --legacy-peer-deps --force  # 安装依赖并强制包含 devDependencies
+
+      # 6. 检查 vue-cli-service 是否存在
+      - name: Debug vue-cli-service
+        run: |
+          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
+            echo "❌ vue-cli-service 缺失，尝试手动补链..."
+            npm rebuild @vue/cli-service            # 重新构建 @vue/cli-service，确保 .bin 文件生成
           fi
+
+          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
+            echo "❌ vue-cli-service 仍不存在，构建失败"
+            exit 1                                  # 如果仍然缺失，退出 CI
+          fi
+          echo "✅ vue-cli-service 检查通过"
 
       # 7. 构建项目
       - name: Build project
-        run: npm run build
-        # 执行 package.json 中的 build 脚本（内部调用 vue-cli-service build）
+        run: npm run build                         # 执行 package.json 中的 build 脚本（vue-cli-service build）
 
       # 8. 上传构建产物
       - name: Upload production-ready build files
-        uses: actions/upload-artifact@v4  # 上传构建结果供后续使用或下载
+        uses: actions/upload-artifact@v4          # 上传构建结果（dist 文件夹）
         with:
-          name: dist  # artifact 名称
-          path: dist/ # 上传 dist 文件夹（Vue CLI 的默认构建输出目录）
+          name: dist                              # artifact 名称
+          path: dist/                             # 上传 dist 文件夹
