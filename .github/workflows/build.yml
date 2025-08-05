@@ -2,7 +2,7 @@ name: Frontend Build
 
 on:
   push:
-    branches: 
+    branches:
       - main  # 推送到 main 分支时触发
 
 jobs:
@@ -25,37 +25,58 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      # 4. 安装依赖（确保 devDependencies 安装）
+      # 4. 缓存 node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules
+          key: node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            node-modules-
+
+      # 5. 安装依赖（优先 npm ci）
       - name: Install dependencies
         run: |
-          echo "尝试 npm ci 安装依赖..."
-          npm ci || (echo "npm ci 失败，改用 npm install --include=dev --legacy-peer-deps" && npm install --include=dev --legacy-peer-deps)
-          echo "✅ 依赖安装完成"
-
-      # 5. 确认 node_modules 及 .bin 目录
-      - name: Debug node_modules
-        run: |
-          ls -la || true
-          ls -la node_modules || echo "❌ node_modules 不存在"
-          ls -la node_modules/.bin || echo "❌ .bin 不存在"
-
-      # 6. 检查 vue-cli-service 是否安装正确，若缺失则自动安装
-      - name: Ensure vue-cli-service
-        run: |
-          if ! npm list @vue/cli-service >/dev/null 2>&1; then
-            echo "⚠️ vue-cli-service 缺失，自动安装 @vue/cli-service@4.5.0 ..."
-            npm install @vue/cli-service@4.5.0 --save-dev
+          if [ ! -d "node_modules" ]; then
+            echo "未命中缓存，安装依赖..."
+            npm ci || (echo "⚠️ npm ci 失败，改用 npm install --include=dev --legacy-peer-deps" && npm install --include=dev --legacy-peer-deps)
           else
-            echo "✅ vue-cli-service 已安装"
+            echo "✅ 命中缓存，跳过依赖安装"
           fi
 
-      # 7. 构建项目（使用本地 vue-cli-service）
-      - name: Build project
-        run: ./node_modules/.bin/vue-cli-service build
+      # 6. 检查并确保 vue-cli-service 安装（自动读取 package.json 版本）
+      - name: Ensure vue-cli-service
+        run: |
+          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
+            echo "⚠️ vue-cli-service 不存在，尝试自动安装..."
+            VERSION=$(node -p "require('./package.json').devDependencies?.['@vue/cli-service'] || require('./package.json').dependencies?.['@vue/cli-service'] || ''")
+            if [ -z "$VERSION" ]; then
+              echo "⚠️ package.json 中未声明 @vue/cli-service，默认安装 ^4.5.0"
+              npm install @vue/cli-service@^4.5.0 --save-dev
+            else
+              echo "检测到 package.json 中声明版本: $VERSION，开始安装..."
+              npm install @vue/cli-service@$VERSION --save-dev
+            fi
+          else
+            echo "✅ vue-cli-service 已存在"
+          fi
 
-      # 8. 上传构建产物
+      # 7. 再次确认 vue-cli-service 是否存在
+      - name: Debug vue-cli-service
+        run: |
+          if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
+            echo "❌ vue-cli-service 依旧不存在，构建终止"
+            exit 1
+          fi
+          echo "✅ vue-cli-service 检查通过"
+
+      # 8. 构建项目
+      - name: Build project
+        run: npm run build
+
+      # 9. 上传构建产物
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:
